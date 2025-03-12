@@ -1,0 +1,27 @@
+# voxel_path: 体素数据路径
+voxel_path = "C:\\Users\\adminTKJ\\Desktop\\MainProject\\CT_投影方式研究\\CT_data\\spine107_img_cropped"
+
+# 是否为单次投影
+single_projection = 1
+# 图像分辨率
+im_sz = [512, 512]
+# 如果是单次投影，需要设定投影的位姿
+# 体素投影设置
+[DRR]
+    # ["circular_perspective", "matrix_perspective", "orthogonal"]
+    projection_type = "circular_perspective"
+    # 初始投影位姿-三个角度的旋转值
+    # 标准正位 0 270 90或者0 90 270
+    # 标准侧位 0 270 0或者0 90 180
+    init_pose = [0, 270, 90]
+    # 添加的噪声
+    # 平移噪声
+    translation_noise = [0, 0, 0]
+    # 旋转噪声
+    rotation_noise = [0, 0, 0]
+    # 是否显示单次投影的结果
+    show_single_projection = 1
+    # 是否保存单次投影的结果
+    save_single_projection = 1
+    # 单次投影的保存路径
+    single_projection_path = "output"
