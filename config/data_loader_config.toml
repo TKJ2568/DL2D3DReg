@@ -3,6 +3,8 @@ voxel_path = "C:\\Users\\adminTKJ\\Desktop\\MainProject\\CT_投影方式研究\\
 
 # 是否为单次投影
 single_projection = 1
+# 光源到像平面的距离
+d_s2p = 800
 # 图像分辨率
 im_sz = [512, 512]
 # 如果是单次投影，需要设定投影的位姿
@@ -22,6 +24,6 @@ im_sz = [512, 512]
     # 是否显示单次投影的结果
     show_single_projection = 1
     # 是否保存单次投影的结果
-    save_single_projection = 1
+    save_single_projection = 0
     # 单次投影的保存路径
     single_projection_path = "output"

@@ -1,0 +1,56 @@
+[init_rx_slider]
+    name = "init_rx"
+    min_value = 0
+    max_value = 360
+    default_value = 0
+
+[init_ry_slider]
+    name = "init_ry"
+    min_value = 0
+    max_value = 360
+    default_value = 270
+
+[init_rz_slider]
+    name = "init_rz"
+    min_value = 0
+    max_value = 360
+    default_value = 90
+
+[noise_rx_slider]
+    name = "noise_rx"
+    min_value = -10
+    max_value = 10
+    default_value = 0
+
+[noise_ry_slider]
+    name = "noise_ry"
+    min_value = -10
+    max_value = 10
+    default_value = 0
+
+[noise_rz_slider]
+    name = "noise_rz"
+    min_value = -10
+    max_value = 10
+    default_value = 0
+
+[noise_tx_slider]
+    name = "noise_tz"
+    min_value = -50
+    max_value = 50
+    default_value = 0
+
+
+[noise_ty_slider]
+    name = "noise_ty"
+    min_value = -50
+    max_value = 50
+    default_value = 0
+
+[noise_tz_slider]
+    name = "noise_tz"
+    min_value = -50
+    max_value = 50
+    default_value = 0
+
+
