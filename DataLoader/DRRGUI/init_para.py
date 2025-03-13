@@ -6,6 +6,7 @@ class InitPara(InitUILayout):
         super().__init__(ui_config)
         self.drr_config = drr_config
         self.projector = None
+        self.img = None
         self.drr_pixmap = None
         # 设置初始的投影参数
         self.d_s2p_text.setText(str(self.drr_config["d_s2p"]))

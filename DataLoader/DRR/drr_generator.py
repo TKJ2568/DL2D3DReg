@@ -1,5 +1,5 @@
 from DataLoader.DRR import ct_projector
-from .dicom_manager import *
+from DataLoader.DRR.dicom_manager import *
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -87,7 +87,7 @@ if __name__ == "__main__":
     # projector.load_ct_images(directory=CT_path)
     projector.set_rotation(0, 180, 180)
     # ["circular_perspective", "matrix_perspective", "orthogonal"]
-    projector.projector.set_project_mode("circular_perspective")
+    projector.projector.set_project_mode("matrix_perspective")
     rota_noise = np.array([0, 0, 0], dtype=np.float32)
     tran_noise = np.array([0, 0, 0],  dtype=np.float32)
     projector.project(rota_noise, tran_noise, mode='display', save=False)

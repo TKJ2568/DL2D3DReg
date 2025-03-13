@@ -1,9 +1,8 @@
-from PyQt6.QtCore import QTimer, QSize
-from PyQt6.QtGui import QIcon
-from PyQt6.QtWidgets import QHBoxLayout, QSpinBox, QWidget, QLineEdit, QPushButton, QFileDialog
-
 # 定义一个带有自定义信号的类
 from PyQt6.QtCore import QObject, pyqtSignal
+from PyQt6.QtCore import QSize
+from PyQt6.QtGui import QIcon
+from PyQt6.QtWidgets import QHBoxLayout, QWidget, QLineEdit, QPushButton, QFileDialog
 
 from DataLoader.DRRGUI.custom_ui_control.CommunicatedSignal import Communicate
 

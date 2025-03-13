@@ -100,7 +100,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="save_img_btn">
+            <widget class="QPushButton" name="save_im_btn">
              <property name="text">
               <string>保存图像</string>
              </property>
@@ -179,6 +179,32 @@
                  </size>
                 </property>
                </spacer>
+              </item>
+              <item>
+               <widget class="QPushButton" name="im_sz_down_btn">
+                <property name="maximumSize">
+                 <size>
+                  <width>80</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>/2</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="im_sz_up_btn">
+                <property name="maximumSize">
+                 <size>
+                  <width>80</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>*2</string>
+                </property>
+               </widget>
               </item>
              </layout>
             </widget>

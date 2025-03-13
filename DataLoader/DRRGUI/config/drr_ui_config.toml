@@ -1,3 +1,6 @@
+# 刷新率，改变位姿参数时的响应投影时间间隔
+refresh_rate = 10
+
 [init_rx_slider]
     name = "init_rx"
     min_value = 0
