@@ -7,7 +7,7 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QMessageBox, QFileDialog
 
 from DataLoader.DRR import Projector
-from .custom_ui_control import messageBox
+from .custom_ui_control import messageBox, ProjectionThread
 from .init_para import InitPara
 from .utils.format_transform import array2pixmap
 
@@ -16,7 +16,7 @@ class EventHandler(InitPara):
     def __init__(self, ui_config, drr_config):
         super().__init__(ui_config, drr_config)
         self.voxel_load_clip_ui.voxel_load_signal.connect(self.load_ct_voxel_file)
-        self.splitter.splitterMoved.connect(self.update_drr_img)
+        self.splitter.splitterMoved.connect(self.update_drr_pixmap)
         # section 连接位姿改变信号
         self.init_rx_custom_slider.value_changed_signal.simple_signal.connect(self.update)
         self.init_ry_custom_slider.value_changed_signal.simple_signal.connect(self.update)
@@ -38,17 +38,19 @@ class EventHandler(InitPara):
         self.save_im_btn.clicked.connect(self.save_im)
 
     def load_ct_voxel_file(self, file_path):
-        self.projector = Projector(directory=file_path)
+        projector = Projector(directory=file_path)
+        self.projector_thread = ProjectionThread(projector)
+        self.projector_thread.im_update_signal.array_update_signal.connect(self.update_im)
         self.update()
         self.voxel_load_clip_ui.voxel_file_load_control.set_line_edit_content(file_path)
 
     def update(self):
-        if self.projector is not None:
+        if self.projector_thread is not None:
             # 设置初始投影参数
             d_s2p = int(self.d_s2p_text.text())
             im_sz = eval(self.im_sz_text.text())
-            self.projector.d_s2p = d_s2p
-            self.projector.im_sz = im_sz
+            self.projector_thread.d_s2p = d_s2p
+            self.projector_thread.im_sz = im_sz
             # 设置位姿
             init_pose_x = self.init_rx_custom_slider.value()
             init_pose_y = self.init_ry_custom_slider.value()
@@ -61,29 +63,26 @@ class EventHandler(InitPara):
             noise_tz = self.noise_tz_custom_slider.value()
             rota_noise = np.array([noise_rx, noise_ry, noise_rz], dtype=np.float32)
             tran_noise = np.array([noise_tx, noise_ty, noise_tz], dtype=np.float32)
-            if im_sz[0] >= 512 or im_sz[1] >= 512:
-                self.projector.projector.set_project_mode("matrix_perspective")
-            else:
-                self.projector.projector.set_project_mode("circular_perspective")
-            self.projector.set_rotation(init_pose_x, init_pose_y, init_pose_z)
-            img = self.projector.project(rota_noise, tran_noise, mode='not_display', save=False, save_path=None)
-            if img is None:
-                messageBox("投影失败, 请检查参数设置")
-                return
-            self.img = img
-            self.drr_pixmap = array2pixmap(img)
-            self.update_drr_img()
+            init_pose = [init_pose_x, init_pose_y, init_pose_z]
+            self.projector_thread.request_projection(init_pose, rota_noise, tran_noise)
         else:
             messageBox("请先加载CT数据")
+    def update_im(self, im):
+        if im is None:
+            messageBox("投影失败, 请检查参数设置")
+            return
+        self.img = im
+        self.drr_pixmap = array2pixmap(im)
+        self.update_drr_pixmap()
 
-    def update_drr_img(self):
+    def update_drr_pixmap(self):
         if self.drr_pixmap is None:
             return
         self.drr_img_label.setPixmap(
             self.drr_pixmap.scaled(self.drr_img_label.size(), aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatio))  # 在label上显示图片
 
     def resizeEvent(self, a0: QtGui.QResizeEvent) -> None:
-        self.update_drr_img()
+        self.update_drr_pixmap()
 
     def im_sz_down(self):
         im_sz = eval(self.im_sz_text.text())

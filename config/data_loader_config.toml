@@ -1,12 +1,15 @@
 # voxel_path: 体素数据路径
 voxel_path = "C:\\Users\\adminTKJ\\Desktop\\MainProject\\CT_投影方式研究\\CT_data\\spine107_img_cropped"
 
+# 是否是生成训练数据
+generate_train_data = 1
+
 # 是否为单次投影
-single_projection = 1
+single_projection = 0
 # 光源到像平面的距离
 d_s2p = 800
 # 图像分辨率
-im_sz = [512, 512]
+im_sz = [128, 128]
 # 如果是单次投影，需要设定投影的位姿
 # 体素投影设置
 [DRR]
@@ -27,3 +30,27 @@ im_sz = [512, 512]
     save_single_projection = 0
     # 单次投影的保存路径
     single_projection_path = "output"
+
+[DRR_train]
+    train_num = 10000
+    # 噪声采样模式：
+    # "uniform"：均匀分布
+    # "normal"：正态分布
+    noise_sample_mode = "uniform"
+    # 保存路径
+    save_path = "data/im/标准侧位"
+    # 位置范围初值设定
+    # "标准正位"或者"标准侧位"
+    standard_pose = "标准侧位"
+    [DRR_train.standard_front]
+        init_pose = [0, 270, 90]
+        # 标准正位下 沿主光轴Y轴的位移是±50，沿其他方向的位移是±25
+        translation_noise_range = [25, 50, 25]
+        # 标准正位下 绕Y轴的旋转为±10。绕其他轴的旋转为±5
+        rotation_noise_range = [5, 10, 5]
+    [DRR_train.standard_side]
+        init_pose = [0, 270, 0]
+        # 标准侧位下 沿主光轴X轴的位移是±50，沿其他方向的位移是±25
+        translation_noise_range = [50, 25, 25]
+        # 标准侧位下 绕X轴的旋转为±10。绕其他轴的旋转为±5
+        rotation_noise_range = [10, 5, 5]

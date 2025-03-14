@@ -5,7 +5,7 @@ class InitPara(InitUILayout):
     def __init__(self, ui_config, drr_config):
         super().__init__(ui_config)
         self.drr_config = drr_config
-        self.projector = None
+        self.projector_thread = None
         self.img = None
         self.drr_pixmap = None
         # 设置初始的投影参数
