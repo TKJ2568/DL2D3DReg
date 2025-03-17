@@ -10,9 +10,10 @@ from .DRR import Projector
 class DataLoader:
     def __init__(self, config: dict):
         self.config = config
-        self.projector = Projector(directory=config['voxel_path'])
-        self.projector.d_s2p = config['d_s2p']
-        self.projector.im_sz = config['im_sz']
+        if config['is_load_voxel']:
+            self.projector = Projector(directory=config['voxel_path'])
+            self.projector.d_s2p = config['d_s2p']
+            self.projector.im_sz = config['im_sz']
         if config['single_projection']:
             self.run_single_projection()
         if config['generate_train_data']:

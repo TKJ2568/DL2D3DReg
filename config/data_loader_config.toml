@@ -1,8 +1,9 @@
 # voxel_path: 体素数据路径
+is_load_voxel = 0
 voxel_path = "C:\\Users\\adminTKJ\\Desktop\\MainProject\\CT_投影方式研究\\CT_data\\spine107_img_cropped"
 
 # 是否是生成训练数据
-generate_train_data = 1
+generate_train_data = 0
 
 # 是否为单次投影
 single_projection = 0

@@ -1,0 +1,19 @@
+valid_model_num = 2
+[general_config]
+    im_size = [128, 128]
+    in_channels = 3
+    out_channels = 6
+[model_1]
+    block_type = "basic"
+    block_channels = [32, 32, 32]
+    mlp_channels = [256, 128, 64]
+    # 是否保存模型结构和保存路径
+    is_save_network_structure = 0
+    save_path = "output/network_structure1"
+[model_2]
+    block_type = "basic"
+    block_channels = [16, 16, 16, 16]
+    mlp_channels = [128, 64, 32, 16]
+    # 是否保存模型结构和保存路径
+    is_save_network_structure = 0
+    save_path = "output/network_structure2"
