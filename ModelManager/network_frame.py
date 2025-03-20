@@ -3,6 +3,15 @@ from torch import nn
 from .Blocks import BasicBlock, MLP
 from torchviz import make_dot
 
+from .network_info import NetworkInfo
+
+
+# 用于统计网络的可训练参数个数
+def get_parameter_number(model):
+    total_num = sum(p.numel() for p in model.parameters())
+    trainable_num = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    return {'Total': total_num, 'Trainable': trainable_num}
+
 class NetworkFrame(nn.Module):
     def __init__(self, general_config: dict, specific_config: dict, block):
         im_size = general_config['im_size']
@@ -24,6 +33,15 @@ class NetworkFrame(nn.Module):
         is_save_network_structure = specific_config.get('is_save_network_structure', False)
         if is_save_network_structure:
             self.get_network_structure(im_size, in_channels, specific_config['save_path'])
+        # 记录网络信息
+        init_info = {
+            "name": specific_config['name'],
+            "im_size": im_size,
+            "in_channels": in_channels,
+            "train_params": get_parameter_number(self)
+        }
+        self.network_info = NetworkInfo(init_info)
+
 
     @staticmethod
     def _make_layer(channels, block):

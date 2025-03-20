@@ -1,3 +1,4 @@
 [config_files]
     data_loader_config = "config/data_loader_config.toml"
     model_manager_config = "config/model_manager_config.toml"
+    trainer_config = "config/trainer_config.toml"

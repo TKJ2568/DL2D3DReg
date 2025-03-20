@@ -6,18 +6,40 @@ from tqdm import tqdm
 from utils.dire_check import manage_folder
 from utils.time_record import timer_decorator_with_info
 from .DRR import Projector
+from .Dataset import CustomDataset, split_dataset
+from torch.utils.data import DataLoader
 
-class DataLoader:
+from .utils import LabelTransform
+
+
+class CustomDataLoader:
     def __init__(self, config: dict):
         self.config = config
         if config['is_load_voxel']:
             self.projector = Projector(directory=config['voxel_path'])
             self.projector.d_s2p = config['d_s2p']
             self.projector.im_sz = config['im_sz']
-        if config['single_projection']:
-            self.run_single_projection()
-        if config['generate_train_data']:
-            self.generate_train_data()
+            if config['single_projection']:
+                self.run_single_projection()
+            if config['generate_train_data']:
+                self.generate_train_data()
+        else:
+            # 导入数据集
+            self.dataset = CustomDataset(config)
+            # 划分数据集
+            train_data_ratio = config['train_data_ratio']
+            val_data_ratio = config['val_data_ratio']
+            test_data_ratio = 1 - train_data_ratio - val_data_ratio
+            self.train_dataset, self.val_dataset, self.test_dataset \
+                = split_dataset(self.dataset, train_ratio=train_data_ratio,
+                                val_ratio=val_data_ratio, test_ratio=test_data_ratio)
+            # 创建 DataLoader
+            self.batch_size = config['batch_size']
+            self.train_loader = DataLoader(self.train_dataset, batch_size=self.batch_size, shuffle=True)
+            self.eval_loader = DataLoader(self.val_dataset, batch_size=self.batch_size, shuffle=False)
+            self.test_loader = DataLoader(self.test_dataset, batch_size=self.batch_size, shuffle=False)
+            # 标签转换器
+            self.label_transformer = LabelTransform(self.config['DRR_train'], self.config['is_cuda'])
 
     def run_single_projection(self):
         init_angle = self.config['DRR']['init_pose']
@@ -69,7 +91,9 @@ class DataLoader:
             "rx_init": str(init_pose[0]),
             "ry_init": str(init_pose[1]),
             "rz_init": str(init_pose[2]),
-        }, "total_num": train_num}
+        }, "total_num": train_num,
+        "rota_noise_range": str(rota_noise_range),
+        "trans_noise_range": str(trans_noise_range)}
         # 使用 tqdm 创建进度条
         with tqdm(total=train_num, desc="Generating Training Data", unit="image") as pbar:
             for i in range(train_num):

@@ -1,0 +1,45 @@
+epoch = 100
+eval_interval = 10
+# 断点续训
+is_resume = 0
+pre_model_address = ""
+
+# 优化器设置
+optimizer = "adam"
+lr = 0.0001
+
+# 损失函数设置
+loss_function = "vm"
+
+# 评估指标设置
+eval_metric = "MPD"
+
+# 保存模型
+save_model_address = "model"
+save_model_prefix = "6D_model_"
+
+# 保存日志
+[save_log_config]
+    save_path = "output\\log"
+    [save_log_config.train_fig_config]
+        title_suffix = "-训练过程"
+        x_label = "epoch"
+        figure_size = ["1024px", "1000px"]
+        save_name = "train_log"
+
+    [save_log_config.eval_fig_config]
+        title_suffix = "-验证过程"
+        x_label = "epoch"
+        figure_size = ["1024px", "1000px"]
+        save_name = "eval_log"
+
+# 如果是vm损失函数，需要设置vm_config
+[vm_config]
+    voxel_size = [180.0, 180.0, 107.0]   # 体素大小, 单位mm
+    interval_num = [20, 20, 4]   # 体素采样间隔，单位为mm
+    d_s2c = 400   # 光源到体素中心的距离，单位为mm
+
+# 如果是MPD评估指标，需要设置MPD_config
+[MPD_config]
+    voxel_size = [180.0, 180.0, 107.0]   # 体素大小, 单位mm
+
