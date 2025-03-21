@@ -1,5 +1,8 @@
-epoch = 100
+trail_epoch = 100
 eval_interval = 10
+trial_times = 5
+final_epoch = 200
+
 # 断点续训
 is_resume = 0
 pre_model_address = ""
@@ -13,10 +16,6 @@ loss_function = "vm"
 
 # 评估指标设置
 eval_metric = "MPD"
-
-# 保存模型
-save_model_address = "model"
-save_model_prefix = "6D_model_"
 
 # 保存日志
 [save_log_config]

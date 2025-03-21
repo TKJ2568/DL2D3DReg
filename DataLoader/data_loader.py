@@ -33,11 +33,6 @@ class CustomDataLoader:
             self.train_dataset, self.val_dataset, self.test_dataset \
                 = split_dataset(self.dataset, train_ratio=train_data_ratio,
                                 val_ratio=val_data_ratio, test_ratio=test_data_ratio)
-            # 创建 DataLoader
-            self.batch_size = config['batch_size']
-            self.train_loader = DataLoader(self.train_dataset, batch_size=self.batch_size, shuffle=True)
-            self.eval_loader = DataLoader(self.val_dataset, batch_size=self.batch_size, shuffle=False)
-            self.test_loader = DataLoader(self.test_dataset, batch_size=self.batch_size, shuffle=False)
             # 标签转换器
             self.label_transformer = LabelTransform(self.config['DRR_train'], self.config['is_cuda'])
 

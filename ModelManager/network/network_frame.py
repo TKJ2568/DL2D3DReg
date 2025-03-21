@@ -1,53 +1,42 @@
 import torch
 from torch import nn
-from .Blocks import BasicBlock, MLP
+from ModelManager.blocks import MLP
 from torchviz import make_dot
 
-from .network_info import NetworkInfo
+from ModelManager.network.model_saver import ModelSaver
+from ModelManager.network.network_info import NetworkInfo
 
 
-# 用于统计网络的可训练参数个数
-def get_parameter_number(model):
-    total_num = sum(p.numel() for p in model.parameters())
-    trainable_num = sum(p.numel() for p in model.parameters() if p.requires_grad)
-    return {'Total': total_num, 'Trainable': trainable_num}
+
 
 class NetworkFrame(nn.Module):
-    def __init__(self, general_config: dict, specific_config: dict, block):
+    def __init__(self, general_config: dict, specific_config: dict, block, **kwargs):
         im_size = general_config['im_size']
         in_channels = general_config['in_channels']
-        block_channels = specific_config['block_channels']
-        mlp_channels = specific_config['mlp_channels']
+        block_channels = specific_config['block'][kwargs.get('block_name')]
+        mlp_channels = specific_config['mlp'][kwargs.get('mlp_name')]
         out_channels = general_config['out_channels']
+        dropout_rate = specific_config.get('dropout_rate', 0.1)
 
         super(NetworkFrame, self).__init__()
         self.conv0 = nn.Conv2d(in_channels=in_channels, out_channels=block_channels[0], kernel_size=(3, 3))
         # 特征提取层
-        self.feature_layer = self._make_layer(block_channels, block)
+        self.feature_layer = self._make_layer(block_channels, block, dropout_rate)
         # 动态计算卷积层的输出维度
         self.conv_output_dim = self._calculate_conv_output_dim(im_size, in_channels)
         # 全连接层
         mlp_channels = [self.conv_output_dim] + mlp_channels + [out_channels]
-        self.fc = self._make_layer(mlp_channels, MLP)
+        self.fc = self._make_layer(mlp_channels, MLP, dropout_rate)
         # 是否保存网络结构图
         is_save_network_structure = specific_config.get('is_save_network_structure', False)
         if is_save_network_structure:
             self.get_network_structure(im_size, in_channels, specific_config['save_path'])
-        # 记录网络信息
-        init_info = {
-            "name": specific_config['name'],
-            "im_size": im_size,
-            "in_channels": in_channels,
-            "train_params": get_parameter_number(self)
-        }
-        self.network_info = NetworkInfo(init_info)
-
 
     @staticmethod
-    def _make_layer(channels, block):
+    def _make_layer(channels, block, dropout_rate):
         layers = []
         for i in range(len(channels) - 1):
-            layers.append(block(channels[i], channels[i+1]))
+            layers.append(block(channels[i], channels[i+1], dropout_rate=dropout_rate))
         return nn.Sequential(*layers)
 
     def _calculate_conv_output_dim(self, im_size, in_channels):

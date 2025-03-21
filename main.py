@@ -18,6 +18,8 @@ class Main:
         trainer_config = ConfigManager.get_instance().get_all_configs("trainer_config")
         self.trainer = Trainer(self.data_loader, self.model_manager, trainer_config, data_loader_config["is_cuda"])
 
+
+
 if __name__ == '__main__':
     # 创建 ConfigManager 单例实例
     config_manager = ConfigManager.get_instance()

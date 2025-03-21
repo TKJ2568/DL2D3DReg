@@ -3,14 +3,34 @@ valid_model_num = 1
     im_size = [128, 128]
     in_channels = 3
     out_channels = 6
+    save_path = "output\\model"
+    loss_threshold = 1000
+    # 保存超参数优化历史
+    optimize_history_save_path = "output\\optimize_history"
+    [general_config.hyperparameters]
+        optimizer = ['SGD', 'Adam', 'RMSprop']
+        lr = [1e-8, 1e-3]
+        batch_size = [4, 8, 16, 32]
+        dropout_rate = [0.1, 0.5]
 [model_1]
     name = "basic_tiny"
     block_type = "basic"
-    block_channels = [32, 32, 32]
-    mlp_channels = [256, 128, 64]
     # 是否保存模型结构图和保存路径
     is_save_network_structure = 0
     save_path = "output/network_structure1"
+    block_keys = ["tiny", "small", "base", "large"]
+    mlp_keys = ["tiny", "small", "base", "large"]
+    [model_1.block]
+        tiny = [16, 16, 16]
+        small = [32, 32, 32]
+        base = [32, 32, 32, 32]
+        large = [64, 64, 64, 64]
+    [model_1.mlp]
+        tiny = [64, 32, 16]
+        small = [128, 64, 32]
+        base = [256, 128, 64, 32]
+        large = [512, 256, 128, 64]
+
 [model_2]
     name = "basic_small"
     block_type = "basic"

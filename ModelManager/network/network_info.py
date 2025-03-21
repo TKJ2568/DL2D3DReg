@@ -27,29 +27,13 @@ class Colors:
 class NetworkInfo:
     def __init__(self, init_info: dict):
         self.name = init_info['name']
-        self.im_size = init_info['im_size']
-        self.in_channels = init_info['in_channels']
-        self.train_params = init_info['train_params']
-
-        self.train_epoch = None
-        self.train_batch_size = None
-        self.train_time = None
-
-        self.optimizer = None
-        self.loss_func = None
-        self.eval_metric = None
+        self.info = init_info
 
         self.train_log = Logger()
         self.eval_log = Logger()
 
     def set_train_info(self, train_info:dict):
-        self.train_epoch = train_info['train_epoch']
-        self.train_batch_size = train_info['train_batch_size']
-        self.train_time = train_info['train_time']
-
-        self.optimizer = train_info['optimizer']
-        self.loss_func = train_info['loss_func']
-        self.eval_metric = train_info['eval_metric']
+        self.info.update(**train_info)
 
     def save_network_info(self, save_log_config):
         """
@@ -61,32 +45,18 @@ class NetworkInfo:
         name_folder = os.path.join(save_path, self.name)
         manage_folder(save_path, self.name)
 
-        # 将成员变量保存为字典
-        info_dict = {
-            "name": self.name,
-            "im_size": self.im_size,
-            "in_channels": self.in_channels,
-            "train_params": self.train_params,
-            "train_epoch": self.train_epoch,
-            "train_batch_size": self.train_batch_size,
-            "train_time": self.train_time,
-            "optimizer": str(self.optimizer),  # 将优化器对象转换为字符串
-            "loss_func": str(self.loss_func),  # 将损失函数对象转换为字符串
-            "eval_metric": str(self.eval_metric),  # 将评估指标对象转换为字符串
-        }
-
         # 保存为 JSON 文件
         save_file_path = os.path.join(str(name_folder), "network_info.json")
         with open(save_file_path, "w", encoding="utf-8") as f:
-            json.dump(info_dict, f, indent=4, ensure_ascii=False)
+            json.dump(self.info, f, indent=4, ensure_ascii=False)
 
         # 保存训练日志
         train_fig_config = save_log_config['train_fig_config']
         save_name = train_fig_config["save_name"] + ".html"
         train_fig_config["title"] = self.name + train_fig_config["title_suffix"]
         train_fig_config["save_path"] = os.path.join(str(name_folder), save_name)
-        train_fig_config["y_label_loss"] = str(self.loss_func)
-        train_fig_config["y_label_precision"] = str(self.eval_metric)
+        train_fig_config["y_label_loss"] = str(self.info['loss_func'])
+        train_fig_config["y_label_precision"] = str(self.info['eval_metric'])
         self.train_log.visualization(train_fig_config)
 
         save_name = train_fig_config["save_name"] + ".csv"
@@ -98,8 +68,8 @@ class NetworkInfo:
         save_name = eval_fig_config["save_name"] + ".html"
         eval_fig_config["title"] = self.name + eval_fig_config["title_suffix"]
         eval_fig_config["save_path"] = os.path.join(str(name_folder), save_name)
-        eval_fig_config["y_label_loss"] = str(self.loss_func)
-        eval_fig_config["y_label_precision"] = str(self.eval_metric)
+        eval_fig_config["y_label_loss"] = str(self.info['loss_func'])
+        eval_fig_config["y_label_precision"] = str(self.info['eval_metric'])
         self.eval_log.visualization(eval_fig_config)
 
         save_name = eval_fig_config["save_name"] + ".csv"
