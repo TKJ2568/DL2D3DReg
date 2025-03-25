@@ -1,15 +1,7 @@
 trail_epoch = 100
+trial_times = 100
+final_epoch = 100
 eval_interval = 10
-trial_times = 5
-final_epoch = 200
-
-# 断点续训
-is_resume = 0
-pre_model_address = ""
-
-# 优化器设置
-optimizer = "adam"
-lr = 0.0001
 
 # 损失函数设置
 loss_function = "vm"

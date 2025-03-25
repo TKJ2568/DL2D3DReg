@@ -2,6 +2,7 @@ import numpy as np
 from pyecharts.charts import Line, Grid
 from pyecharts import options as opts
 import csv
+import copy
 
 def normalize_data(data):
     """
@@ -9,7 +10,7 @@ def normalize_data(data):
     """
     min_val = np.min(data)
     max_val = np.max(data)
-    return (data - min_val) / (max_val - min_val)
+    return copy.deepcopy((data - min_val) / (max_val - min_val))
 
 def create_line_chart(x_data, y_data, y_label, title=None, y_axis_name=None,
                       legend_pos_top=None):
@@ -87,19 +88,19 @@ class Logger:
         )
 
         # 归一化数据
-        self.losses = normalize_data(self.losses)
-        self.precisions = normalize_data(self.precisions)
+        normalized_losses = normalize_data(self.losses)
+        normalized_precisions = normalize_data(self.precisions)
 
         # 创建归一化后的损失值折线图
         norm_loss_line = create_line_chart(
-            self.epochs, self.losses, figure_config["y_label_loss"],
+            self.epochs, normalized_losses, figure_config["y_label_loss"],
             y_axis_name="Normalized Loss",
             legend_pos_top="63%",  # legend 放在底部
         )
 
         # 创建归一化后的精度折线图
         norm_precision_line = create_line_chart(
-            self.epochs, self.precisions, figure_config["y_label_precision"],
+            self.epochs, normalized_precisions, figure_config["y_label_precision"],
             y_axis_name="Normalized Precision",
         )
         # 将归一化后的两条曲线叠加到同一个图上

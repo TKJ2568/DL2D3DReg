@@ -1,12 +1,8 @@
 import torch
 from torch import nn
-from ModelManager.blocks import MLP
 from torchviz import make_dot
 
-from ModelManager.network.model_saver import ModelSaver
-from ModelManager.network.network_info import NetworkInfo
-
-
+from ModelManager.blocks import MLP
 
 
 class NetworkFrame(nn.Module):
