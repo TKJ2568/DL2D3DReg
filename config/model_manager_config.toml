@@ -1,4 +1,4 @@
-valid_model_num = 1
+valid_model_num = 2
 [general_config]
     im_size = [128, 128]
     in_channels = 3

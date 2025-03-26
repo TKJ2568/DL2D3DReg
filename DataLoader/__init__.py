@@ -1,1 +1,2 @@
-from .data_loader import CustomDataLoader
+from .custom_data_manager import CustomDataManager
+from .custom_dataloader import DataLoaderWrapper

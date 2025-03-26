@@ -1,16 +1,11 @@
-import time
-
 import numpy as np
-import torch
-from torch import optim
-from tqdm import tqdm
 
-from DataLoader import CustomDataLoader
+from DataLoader import CustomDataManager
 from ModelManager import ModelManager
 from ModelManager.network import NetworkGroup
-from ModelManager.network.network_frame import NetworkFrame
 from Trainer.CustomLoss import VmLoss
 from Trainer.CustomMetric import MaxPointDistance
+
 
 def get_loss_function(config, is_cuda):
     if config['loss_function'] == 'vm':
@@ -28,14 +23,14 @@ def get_metric_function(config):
         return MaxPointDistance(voxel_size, rot_cen)
 
 class Trainer:
-    def __init__(self, data_loader: CustomDataLoader, model_manager: ModelManager, config: dict, is_cuda):
+    def __init__(self, data_loader: CustomDataManager, model_manager: ModelManager, config: dict, is_cuda):
         self.data_loader = data_loader
         self.model_manager = model_manager
         self.loss_function = get_loss_function(config, is_cuda)
         self.metric_function = get_metric_function(config)
         self.is_cuda = is_cuda
         self.config = config
-        self.train_trail()
+        # self.train_trail()
 
     def train_trail(self):
         # 创建模型组

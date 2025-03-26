@@ -2,7 +2,7 @@ import os
 import json
 import torch
 import numpy as np
-from torch.utils.data import Dataset, random_split
+from torch.utils.data import Dataset, random_split, Subset
 from .image_process import norm_image, generate_uv_coordinates, expand_uv_to_batch
 
 
@@ -20,28 +20,75 @@ def string_to_list(input_str):
         print(f"无法将以下参数转换为列表: {input_str}")
         return None
 
-def split_dataset(dataset, train_ratio=0.7, val_ratio=0.15, test_ratio=0.15, random_seed=42):
+
+def split_dataset(
+        dataset,
+        split_history_dir="data_splits",
+        split_history_filename="default_split.json",
+        train_ratio=0.7,
+        val_ratio=0.15,
+        test_ratio=0.15,
+        random_seed=42,
+        overwrite=False
+):
     """
-    按比例划分数据集
-    :param dataset: 完整的数据集
+    按比例划分数据集（支持从历史文件加载）
+
+    :param dataset: 完整数据集
+    :param split_history_dir: 划分记录保存目录
+    :param split_history_filename: 划分记录文件名
     :param train_ratio: 训练集比例
     :param val_ratio: 验证集比例
     :param test_ratio: 测试集比例
     :param random_seed: 随机种子
-    :return: 训练集、验证集、测试集
+    :param overwrite: 是否强制重新划分（覆盖旧记录）
+    :return: (train_dataset, val_dataset, test_dataset)
     """
-    assert train_ratio + val_ratio + test_ratio == 1, "比例之和必须为 1"
+    os.makedirs(split_history_dir, exist_ok=True)
+    split_path = os.path.join(split_history_dir, split_history_filename)
 
-    # 计算各数据集的大小
+    # 如果存在记录文件且不强制覆盖，则加载历史划分
+    if not overwrite and os.path.exists(split_path):
+        with open(split_path, 'r') as f:
+            indices = json.load(f)
+
+        # 验证数据集大小是否匹配
+        if len(indices['train']) + len(indices['val']) + len(indices['test']) == len(dataset):
+            return (
+                Subset(dataset, indices['train']),
+                Subset(dataset, indices['val']),
+                Subset(dataset, indices['test'])
+            )
+        print("Warning: Dataset size mismatch, regenerating splits...")
+
+    # 执行新划分
+    assert abs((train_ratio + val_ratio + test_ratio) - 1) < 1e-6, "比例之和必须为1"
+
     total_size = len(dataset)
     train_size = int(train_ratio * total_size)
     val_size = int(val_ratio * total_size)
     test_size = total_size - train_size - val_size
 
-    # 划分数据集
     train_dataset, val_dataset, test_dataset = random_split(
-        dataset, [train_size, val_size, test_size], generator=torch.Generator().manual_seed(random_seed)
+        dataset,
+        [train_size, val_size, test_size],
+        generator=torch.Generator().manual_seed(random_seed)
     )
+
+    # 保存划分记录
+    indices = {
+        'train': train_dataset.indices,
+        'val': val_dataset.indices,
+        'test': test_dataset.indices,
+        'metadata': {
+            'total_size': total_size,
+            'ratios': {'train': train_ratio, 'val': val_ratio, 'test': test_ratio},
+            'seed': random_seed
+        }
+    }
+
+    with open(split_path, 'w') as f:
+        json.dump(indices, f, indent=2)
 
     return train_dataset, val_dataset, test_dataset
 

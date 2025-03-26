@@ -1,0 +1,39 @@
+test_epoch = 5
+
+model_name_list = [
+    "basic_tiny_1",
+    "basic_tiny_2",
+]
+
+# 需要导入的测试模型的相关信息的文件路径
+model_info_path_list = [
+    "output/log/basic_tiny/network_info.json",
+    "output/log/basic_tiny/network_info.json",
+]
+
+# 测试结果保存
+save_path = "output"
+
+[figure_config]
+    figure_size = ["1024px", "1000px"]
+
+# 如果是vm损失函数，需要设置vm_config
+[vm_metric]
+    voxel_size = [180.0, 180.0, 107.0]   # 体素大小, 单位mm
+    interval_num = [20, 20, 4]   # 体素采样间隔，单位为mm
+    d_s2c = 400   # 光源到体素中心的距离，单位为mm
+
+# 如果是MPD评估指标，需要设置MPD_config
+[MPD_metric]
+    voxel_size = [180.0, 180.0, 107.0]   # 体素大小, 单位mm
+
+# 直接对预测结果做MSE评估
+[MSE_metric]
+
+# 对预测结果做图像MSE评估
+[Image_MSE_metric]
+
+# 对预测结果做SSIM评估
+[Image_SSIM_metric]
+
+

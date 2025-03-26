@@ -12,7 +12,7 @@ from torch.utils.data import DataLoader
 from .utils import LabelTransform
 
 
-class CustomDataLoader:
+class CustomDataManager:
     def __init__(self, config: dict):
         self.config = config
         if config['is_load_voxel']:
@@ -31,8 +31,13 @@ class CustomDataLoader:
             val_data_ratio = config['val_data_ratio']
             test_data_ratio = 1 - train_data_ratio - val_data_ratio
             self.train_dataset, self.val_dataset, self.test_dataset \
-                = split_dataset(self.dataset, train_ratio=train_data_ratio,
-                                val_ratio=val_data_ratio, test_ratio=test_data_ratio)
+                = split_dataset(self.dataset,
+                                split_history_dir=config['split_history_dir'],
+                                split_history_filename=config['split_history_filename'],
+                                train_ratio=train_data_ratio,
+                                val_ratio=val_data_ratio,
+                                test_ratio=test_data_ratio,
+                                overwrite=config['is_use_old_split'])
             # 标签转换器
             self.label_transformer = LabelTransform(self.config['DRR_train'], self.config['is_cuda'])
 

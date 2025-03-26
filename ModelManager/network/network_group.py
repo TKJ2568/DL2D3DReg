@@ -25,6 +25,7 @@ from optuna.visualization import (
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
+from DataLoader import DataLoaderWrapper
 from ModelManager.network.model_saver import ModelSaver
 from ModelManager.network.network_frame import NetworkFrame
 from ModelManager.network.network_info import NetworkInfo
@@ -67,7 +68,7 @@ class NetworkGroup:
 
     def train_once(self, model, optimizer, train_loader):
         model.train()
-        images, labels = next(iter(train_loader))
+        images, labels = next(train_loader)
         output = model(images)
         # 从归一化的值恢复到真实值
         labels = self.label_transformer.label2real(labels)
@@ -82,7 +83,7 @@ class NetworkGroup:
 
     def eval_once(self, model, eval_loader):
         model.eval()
-        images, labels = next(iter(eval_loader))
+        images, labels = next(eval_loader)
         with torch.no_grad():
             output = model(images)
             # 从归一化的值恢复到真实值
@@ -103,8 +104,8 @@ class NetworkGroup:
         block_name = trial.suggest_categorical('block', self.specific_config['block_keys'])
         mlp_name = trial.suggest_categorical('mlp', self.specific_config['mlp_keys'])
         # 初始化数据集
-        train_loader = DataLoader(self.train_dataset, batch_size=batch_size, shuffle=True)
-        val_loader = DataLoader(self.val_dataset, batch_size=batch_size, shuffle=False)
+        train_loader = DataLoaderWrapper(self.train_dataset, batch_size=batch_size, shuffle=True)
+        val_loader = DataLoaderWrapper(self.val_dataset, batch_size=batch_size, shuffle=False)
 
         # 初始化模型和损失函数
         self.general_config["dropout_rate"] = dropout_rate
@@ -201,8 +202,8 @@ class NetworkGroup:
         mlp_name = self.best_model_params['mlp']
 
         # 初始化数据集
-        train_loader = DataLoader(self.train_dataset, batch_size=batch_size, shuffle=True)
-        val_loader = DataLoader(self.val_dataset, batch_size=batch_size, shuffle=False)
+        train_loader = DataLoaderWrapper(self.train_dataset, batch_size=batch_size, shuffle=True)
+        val_loader = DataLoaderWrapper(self.val_dataset, batch_size=batch_size, shuffle=False)
 
         # 更新通用配置中的 dropout_rate
         self.general_config["dropout_rate"] = dropout_rate
@@ -239,6 +240,7 @@ class NetworkGroup:
             "block_type": self.specific_config["block_type"],
             "im_size": self.general_config['im_size'],
             "in_channels": self.general_config['in_channels'],
+            "out_channels": self.general_config['out_channels'],
             "train_params": get_parameter_number(model),
             "block": self.specific_config['block'][block_name],
             "mlp": self.specific_config['mlp'][mlp_name],
@@ -271,7 +273,7 @@ class NetworkGroup:
                 epoch_bar.write(f"Eval at Epoch {epoch}: Loss: {eval_loss}, MPD: {eval_mpd}")
             self.model_saver.save_checkpoint(model, optimizer, epoch, train_loss)
         # 保存最后的模型
-        self.model_saver.save_model(model, final_loss)
+        model_save_path = self.model_saver.save_model(model, final_loss)
         # 记录训练结束时间
         end_time = time.time()
         training_time = end_time - start_time
@@ -286,6 +288,7 @@ class NetworkGroup:
             "dropout_rate": dropout_rate,
             "loss_func": kwargs.get('loss_function', 'VmLoss'),
             "eval_metric": kwargs.get('eval_metric', 'MPD'),
+            "model_save_path": model_save_path
         }
         self.network_info.set_train_info(train_info)
         self.network_info.save_network_info(kwargs.get('save_log_config'))

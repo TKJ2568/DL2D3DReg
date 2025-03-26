@@ -12,6 +12,11 @@ voxel_path = "C:\\Users\\adminTKJ\\Desktop\\MainProject\\CT_投影方式研究\\
 # 是否是生成训练数据
 generate_train_data = 0
 
+# 生成训练数据的时候，是否使用之前的数据集划分方式
+is_use_old_split = 0
+split_history_dir = "output/dataset_split_history"
+split_history_filename = "default_split.json"
+
 # 是否为单次投影
 single_projection = 0
 # 光源到像平面的距离

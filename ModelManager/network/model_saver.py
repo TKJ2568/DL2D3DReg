@@ -36,4 +36,6 @@ class ModelSaver:
     def save_model(self, train_model, loss):
         # 格式化 loss 为小数点后 5 位
         formatted_loss = f"{loss:.5f}"
-        torch.save(train_model.state_dict(), os.path.join(str(self.name_folder), f"{self.name}_loss{formatted_loss}.pth"))
+        model_save_path = os.path.join(str(self.name_folder), f"{self.name}_loss{formatted_loss}.pth")
+        torch.save(train_model.state_dict(), model_save_path)
+        return model_save_path

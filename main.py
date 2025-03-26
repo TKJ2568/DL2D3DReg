@@ -1,14 +1,15 @@
 import toml
 
 from ModelManager import ModelManager
+from Tester import Tester
 from Trainer import Trainer
 from config import ConfigManager
-from DataLoader import CustomDataLoader
+from DataLoader import CustomDataManager
 
 class Main:
     def __init__(self):
         data_loader_config = ConfigManager.get_instance().get_all_configs("data_loader_config")
-        self.data_loader = CustomDataLoader(data_loader_config)
+        self.data_loader = CustomDataManager(data_loader_config)
         if data_loader_config['is_load_voxel']:
             print("加载体素模式中，其他模块不可用")
             return
@@ -17,7 +18,9 @@ class Main:
         # 初始化训练模块
         trainer_config = ConfigManager.get_instance().get_all_configs("trainer_config")
         self.trainer = Trainer(self.data_loader, self.model_manager, trainer_config, data_loader_config["is_cuda"])
-
+        # 初始化测试模块
+        tester_config = ConfigManager.get_instance().get_all_configs("tester_config")
+        self.tester = Tester(self.data_loader, self.model_manager, tester_config, data_loader_config["is_cuda"])
 
 
 if __name__ == '__main__':

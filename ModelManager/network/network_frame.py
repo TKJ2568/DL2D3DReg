@@ -1,4 +1,5 @@
 import torch
+from sympy import block_collapse
 from torch import nn
 from torchviz import make_dot
 
@@ -9,8 +10,12 @@ class NetworkFrame(nn.Module):
     def __init__(self, general_config: dict, specific_config: dict, block, **kwargs):
         im_size = general_config['im_size']
         in_channels = general_config['in_channels']
-        block_channels = specific_config['block'][kwargs.get('block_name')]
-        mlp_channels = specific_config['mlp'][kwargs.get('mlp_name')]
+        if kwargs.get('block_name') is None or kwargs.get('mlp_name') is None:
+            block_channels = specific_config['block']
+            mlp_channels = specific_config['mlp']
+        else:
+            block_channels = specific_config['block'][kwargs.get('block_name')]
+            mlp_channels = specific_config['mlp'][kwargs.get('mlp_name')]
         out_channels = general_config['out_channels']
         dropout_rate = specific_config.get('dropout_rate', 0.1)
 
@@ -71,3 +76,10 @@ class NetworkFrame(nn.Module):
         MyConvNetVis.format = "png"
         MyConvNetVis.directory = save_path
         MyConvNetVis.view()
+
+    def load_weights(self, weights_path):
+        """
+        加载权重
+        """
+        state_dict = torch.load(weights_path, weights_only=True)
+        self.load_state_dict(state_dict)
