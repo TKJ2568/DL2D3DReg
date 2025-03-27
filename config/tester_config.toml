@@ -1,4 +1,4 @@
-test_epoch = 5
+test_epoch = 10
 
 model_name_list = [
     "basic_tiny_1",
@@ -13,6 +13,7 @@ model_info_path_list = [
 
 # 测试结果保存
 save_path = "output"
+abnormal_img_num = 5   # 在测试过程中，保存异常图片的数量，需要小于等于测试集的数量
 
 [figure_config]
     figure_size = ["1024px", "1000px"]

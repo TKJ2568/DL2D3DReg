@@ -12,7 +12,7 @@ class ResultVisualizer:
         self.save_name = kwargs.get("save_name", "测试评价指标对比.html")
         self.figure_config = kwargs.get("figure_config")
 
-    def visualize_results(self, logger_dicts):
+    def visualize_metrics_results(self, logger_dicts):
         model_names = list(logger_dicts.keys())
 
         # 初始化箱线图
