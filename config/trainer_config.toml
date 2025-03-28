@@ -1,3 +1,6 @@
+# 是否是训练模式
+is_train = 0
+
 trail_epoch = 100
 trial_times = 100
 final_epoch = 100

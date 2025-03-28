@@ -37,7 +37,7 @@ class CustomDataManager:
                                 train_ratio=train_data_ratio,
                                 val_ratio=val_data_ratio,
                                 test_ratio=test_data_ratio,
-                                overwrite=config['is_use_old_split'])
+                                overwrite=~bool(config['is_use_old_split']))
             # 标签转换器
             self.label_transformer = LabelTransform(self.config['DRR_train'], self.config['is_cuda'])
 

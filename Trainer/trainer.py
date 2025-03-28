@@ -30,7 +30,8 @@ class Trainer:
         self.metric_function = get_metric_function(config)
         self.is_cuda = is_cuda
         self.config = config
-        # self.train_trail()
+        if self.config["is_train"]:
+            self.train_trail()
 
     def train_trail(self):
         # 创建模型组
